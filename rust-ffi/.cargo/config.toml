@@ -1,2 +1,2 @@
 [build]
-rustflags = ["-L", "../c-ffi/math_ops.h"]
+rustflags = ["-L", "/home/tevon/programming/test-speeds/testing-lock-speeds/c-ffi"]

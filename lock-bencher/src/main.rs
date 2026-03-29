@@ -1,12 +1,14 @@
-use std::env::Args;
+use std::env;
 use std::hint::black_box;
 use std::sync::{Arc, Mutex, RwLock, mpsc};
 use std::thread;
 use std::time::{Duration, Instant};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let num_threads = 10;
-    let sec = 5;
+    let args: Vec<_> = env::args().collect();
+    println!("{args:?}");
+    let num_threads = str::parse(&args[1])?;
+    let sec = str::parse(&args[2])?;
     let time = Duration::from_secs(sec);
     let value = Arc::new(Mutex::new(0));
     let (tx, rx) = mpsc::channel();

@@ -1,3 +1,3 @@
 [workspace]
 resolver = "3"
-members = ["rs-locks"]
+members = ["rs-locks", "rust-ffi"]

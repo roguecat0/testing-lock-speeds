@@ -14,8 +14,8 @@ lib2.mutex_bench.argtypes = [ctypes.c_uint16, ctypes.c_uint32]
 lib2.mutex_bench.restype = ctypes.c_float
 
 x = list(range(1, 11))
-results1 = [lib1.mutex_reads(i, 3000) for i in x]
 results2 = [lib2.mutex_bench(i, 3000) for i in x]
+results1 = [lib1.mutex_reads(i, 3000) for i in x]
 results = [results1, results2]
 
 plt.plot(x, results1, marker="o", linestyle="-")

@@ -1,13 +1,13 @@
 use std::hint::black_box;
 use std::sync::atomic;
-use std::sync::{Arc, Mutex, mpsc};
+use std::sync::{Arc, RwLock, mpsc};
 use std::thread;
 use std::time::{Duration, Instant};
 
 #[unsafe(no_mangle)]
-pub fn mutex_bench(num_threads: u16, sec: u32) -> f32 {
+pub fn rwlock_bench(num_threads: u16, sec: u32) -> f32 {
     let time = Duration::from_millis(sec as u64);
-    let value = Arc::new(Mutex::new(0));
+    let value = Arc::new(RwLock::new(0));
     println!("running: threads = {num_threads}, seconds: {time:?}");
     let (tx, rx) = mpsc::channel();
     let mut res = 0;
@@ -21,14 +21,14 @@ pub fn mutex_bench(num_threads: u16, sec: u32) -> f32 {
             let mut ops = 0;
             while ef.load(atomic::Ordering::Relaxed) {}
             while !ef.load(atomic::Ordering::Relaxed) {
-                let guard = val.lock().unwrap();
+                let guard = val.read().unwrap();
                 black_box(*guard);
                 ops += 1;
             }
             txx.send(ops).unwrap();
         });
     }
-    end_flag.store(false, atomic::Ordering::Relaxed);
+    let end_flag = Arc::new(atomic::AtomicBool::new(false));
     let end = Instant::now() + time;
     while Instant::now() < end {}
     end_flag.store(true, atomic::Ordering::Relaxed);

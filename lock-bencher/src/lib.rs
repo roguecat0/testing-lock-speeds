@@ -35,5 +35,5 @@ pub fn bench_result(num_threads: u16, sec: u32) -> f32 {
         let ops = rx.recv().unwrap();
         res += ops;
     }
-    res as f32 / sec as f32 / 1000000.0
+    res as f32 / sec as f32 / 1000.0
 }

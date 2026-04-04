@@ -1,67 +1,32 @@
+// use lock_bencher::bench_result;
 use std::collections::HashMap;
-use std::hint::black_box;
-use std::sync::atomic;
-use std::sync::{Arc, Mutex, RwLock, mpsc};
-use std::thread;
-use std::time::{Duration, Instant};
 use std::{env, u64};
 
 type BenchRes = HashMap<String, HashMap<i32, f64>>;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<_> = env::args().collect();
-    let sec = str::parse(&args[1])?;
-    let num_threads = str::parse(&args[2])?;
-    if args.len() > 3 {
-        println!("{args:?}");
-        let rps = bench_result(num_threads, sec);
-        println!(
-            "result: streads: {num_threads}, seconds: {sec}, million reads per seconds {:.2}",
-            rps / 1000000.0
-        );
-        return Ok(());
-    }
-    let type1 = "mutex";
-    let mut mutex_res: HashMap<i32, f64> = HashMap::new();
-    for i in 1..(num_threads + 1) {
-        let rps = bench_result(i, sec);
-        mutex_res.entry(i).or_insert(rps);
-    }
-    let res: BenchRes = HashMap::from([(type1.to_string(), mutex_res)]);
-    print_results_ai(&res, sec);
-
+    // let args: Vec<_> = env::args().collect();
+    // let sec = str::parse(&args[1])?;
+    // let num_threads = str::parse(&args[2])?;
+    // if args.len() > 3 {
+    //     println!("{args:?}");
+    //     let rps = 32.0; //bench_result(num_threads, sec);
+    //     println!(
+    //         "result: streads: {num_threads}, seconds: {sec}, million reads per seconds {:.2}",
+    //         rps / 1000000.0
+    //     );
+    //     return Ok(());
+    // }
+    // let type1 = "mutex";
+    // let mut mutex_res: HashMap<i32, f64> = HashMap::new();
+    // for i in 1..(num_threads + 1) {
+    //     let rps = 32.0; //bench_result(i, sec);
+    //     mutex_res.entry(i as i32).or_insert(rps as f64);
+    // }
+    // let res: BenchRes = HashMap::from([(type1.to_string(), mutex_res)]);
+    // print_results_ai(&res, sec);
+    //
     Ok(())
-}
-fn bench_result(num_threads: i32, sec: u64) -> f64 {
-    let time = Duration::from_secs(sec);
-    let value = Arc::new(Mutex::new(0));
-    let (tx, rx) = mpsc::channel();
-    let mut res = 0;
-    let end = Instant::now() + time;
-    let end_flag = Arc::new(atomic::AtomicBool::new(false));
-
-    for _ in 0..num_threads {
-        let txx = tx.clone();
-        let val = value.clone();
-        let ef = end_flag.clone();
-        let _ = thread::spawn(move || {
-            let mut ops = 0;
-            while !ef.load(atomic::Ordering::Relaxed) {
-                let guard = val.lock().unwrap();
-                black_box(*guard);
-                ops += 1;
-            }
-            txx.send(ops).unwrap();
-        });
-    }
-    while Instant::now() < end {}
-    end_flag.store(true, atomic::Ordering::Relaxed);
-
-    for _ in 0..num_threads {
-        let ops = rx.recv().unwrap();
-        res += ops;
-    }
-    res as f64 / sec as f64 / 1000000.0
 }
 
 fn print_results(res: &BenchRes, sec: u64) {
@@ -80,7 +45,7 @@ fn print_results(res: &BenchRes, sec: u64) {
     }
 }
 
-fn print_results_ai(res: &BenchRes, sec: u64) {
+fn print_results_ai(res: &BenchRes, sec: u32) {
     println!("million reads per second measured over {sec} seconds");
 
     if res.is_empty() {

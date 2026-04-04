@@ -6,10 +6,14 @@ lib = ctypes.CDLL("./lib_lock_speed.so")
 lib.mutex_reads.argtypes = [ctypes.c_uint16, ctypes.c_uint32]
 lib.mutex_reads.restype = ctypes.c_float
 
-x = list(range(1, 11))
-results = [lib.mutex_reads(i, 3000) for i in x]
+lib = ctypes.CDLL("../lock-bencher/liblock_bencher.so")
+lib.bench_result.argtypes = [ctypes.c_uint16, ctypes.c_uint32]
+lib.bench_result.restype = ctypes.c_float
 
-plt.plot(x, results, marker='o', linestyle='-')
+x = list(range(1, 11))
+results = [lib.bench_result(i, 3000) for i in x]
+
+plt.plot(x, results, marker="o", linestyle="-")
 
 plt.xlabel("Threads")
 plt.ylabel("Reads/µS")
@@ -23,7 +27,7 @@ y_end = 5 * int(y_max // 5 + 1)
 plt.yticks(np.arange(0, max(results) + 5, 5))
 
 
-plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.grid(axis="y", linestyle="--", alpha=0.7)
 
 plt.tight_layout()
 

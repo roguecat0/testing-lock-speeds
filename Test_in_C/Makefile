@@ -1,7 +1,7 @@
 CFLAGS=-Wall -g
 OUTPUT=main
 RUNTIME=2000
-READERS=5
+READERS=2
 
 all: library
 

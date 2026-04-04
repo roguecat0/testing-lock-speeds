@@ -5,4 +5,4 @@ edition = "2024"
 
 [dependencies]
 [lib]
-crate-type = ["staticlib"]
+crate-type = ["cdylib"]

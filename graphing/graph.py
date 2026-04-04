@@ -9,7 +9,7 @@ lib1 = ctypes.CDLL("../Test_in_C/lib_lock_speed.so")
 lib1.mutex_reads.argtypes = [ctypes.c_uint16, ctypes.c_uint32]
 lib1.mutex_reads.restype = ctypes.c_float
 
-lib2 = ctypes.CDLL("../target/release/librs_locks.so")
+lib2 = ctypes.CDLL("../rs-locks/librs_locks.so")
 lib2.mutex_bench.argtypes = [ctypes.c_uint16, ctypes.c_uint32]
 lib2.mutex_bench.restype = ctypes.c_float
 
